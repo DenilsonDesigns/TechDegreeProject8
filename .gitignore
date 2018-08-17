@@ -1,3 +1,7 @@
 .DS_Store
 .sass-cache
 /node_modules
+/css/global.css
+/css/global.css.map
+/js/global.js.map
+/js/global.min.js
