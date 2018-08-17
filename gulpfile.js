@@ -7,6 +7,7 @@ const rename = require("gulp-rename");
 const sass = require("gulp-sass");
 const maps = require("gulp-sourcemaps");
 const del = require("del");
+const cleanCSS = require('gulp-clean-css');
 
 gulp.task("concatScripts", () => {
   return gulp
@@ -34,6 +35,14 @@ gulp.task("compileSass", () => {
     .pipe(gulp.dest("css"));
 });
 
+gulp.task("minifyCss", ["compileSass"], () => {
+   return gulp
+     .src("css/global.css")
+     .pipe(cleanCSS({compatibility: 'ie8'}))
+     .pipe(rename("global.min.css"))
+     .pipe(gulp.dest("css"));
+ });
+
 gulp.task("watchFiles", () => {
   gulp.watch(["sass/**/*.scss", "sass/**/*.sass"], ["compileSass"]);
   gulp.watch("js/global.js", ["concatScripts"]);
@@ -43,11 +52,11 @@ gulp.task("clean", () => {
   del(["dist", "js/global.js", "css", "js/global.min.js", "js/global.js.map"]);
 });
 
-gulp.task("build", ["minifyScripts", "compileSass"], () => {
+gulp.task("build", ["minifyScripts", "minifyCss"], () => {
   return gulp
     .src(
       [
-        "css/global.css",
+        "css/global.min.css",
         "js/global.min.js",
         "index.html",
         "images/**",
