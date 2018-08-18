@@ -9,6 +9,7 @@ const maps = require("gulp-sourcemaps");
 const del = require("del");
 const cleanCSS = require("gulp-clean-css");
 const imagemin = require("gulp-imagemin");
+const webserver = require('gulp-webserver');
 
 // TASK1************************
 gulp.task("concatScripts", () => {
@@ -20,7 +21,7 @@ gulp.task("concatScripts", () => {
     .pipe(gulp.dest("js"));
 });
 
-gulp.task("script", ["concatScripts"], () => {
+gulp.task("scripts", ["concatScripts"], () => {
   return gulp
     .src("js/all.js")
     .pipe(uglify())
@@ -67,8 +68,8 @@ gulp.task("clean", () => {
   del(["dist", "js/all.js", "css", "js/all.min.js", "js/all.js.map"]);
 });
 //**********TASK 6 **************************/
-// gulp.series('clean', gulp.parallel('scripts', 'styles'),
-gulp.task("build", ['clean', 'styles', 'script', 'images'], () => {
+
+gulp.task("build", ['clean', 'styles', 'scripts', 'images'], () => {
     return gulp
       .src(
         [
@@ -87,6 +88,21 @@ gulp.task("build", ['clean', 'styles', 'script', 'images'], () => {
 
 gulp.task("serve", ["watchFiles"]);
 
-gulp.task("default", ["clean"], () => {
-  gulp.start("build");
+//WEBSERVER** PORT 3000
+gulp.task('webserver', function() {
+  gulp.src('./')
+    .pipe(webserver({
+      livereload: true,
+      directoryListing: true,
+      open: true,
+      port: 3000,
+    }));
+});
+
+
+//DEFAULT TASK
+gulp.task("default", ["clean", 'build'], () => {
+  // gulp.start("build");
+  gulp.start('webserver');
+  gulp.start('watchFiles');
 });
